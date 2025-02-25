@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film hinzufügen</title>
+    <script>
+        async function fetchMovieData() {
+            const title = document.getElementById("title").value;
+            if (title.length < 3) return;
+
+            try {
+                const response = await fetch(`/fetch_movie_data?title=${title}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById("director").value = data.director;
+                    document.getElementById("year").value = data.year;
+                    document.getElementById("rating").value = data.rating;
+                } else {
+                    alert("Film nicht gefunden!");
+                }
+            } catch (error) {
+                console.error("Fehler beim Laden der Filmdaten:", error);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>🎬 Film für {{ user.username }} hinzufügen</h1>
+
+    <form method="POST">
+        <label for="title">Filmtitel:</label>
+        <input type="text" id="title" name="title" onblur="fetchMovieData()" required>
+        <br>
+
+        <label for="director">Regisseur:</label>
+        <input type="text" id="director" name="director" required>
+        <br>
+
+        <label for="year">Erscheinungsjahr:</label>
+        <input type="number" id="year" name="year" required>
+        <br>
+
+        <label for="rating">Bewertung:</label>
+        <input type="text" id="rating" name="rating" required>
+        <br>
+
+        <button type="submit">Film hinzufügen</button>
+    </form>
+
+    <br>
+    <a href="/movies/{{ user.id }}">⬅️ Zurück zu den Filmen</a>
+</body>
+</html>

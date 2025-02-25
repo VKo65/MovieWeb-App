@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benutzerliste</title>
+</head>
+<body>
+    <h1>📋 Benutzerliste</h1>
+
+    <ul>
+        {% for user in users %}
+            <li>
+                <a href="/movies/{{ user.id }}">{{ user.username }}</a>
+                <a href="/users/{{ user.id }}/add_movie">
+                    <button>🎬 Film hinzufügen</button>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>

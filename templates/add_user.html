@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Benutzer hinzufügen</title>
+</head>
+<body>
+    <h1>👤 Neuen Benutzer hinzufügen</h1>
+    <form action="{{ url_for('add_user') }}" method="POST">
+        <label for="username">Benutzername:</label>
+        <input type="text" id="username" name="username" required>
+        <button type="submit">Hinzufügen</button>
+    </form>
+    <br>
+    <a href="{{ url_for('list_users') }}">⬅️ Zur Benutzerliste</a>
+</body>
+</html>

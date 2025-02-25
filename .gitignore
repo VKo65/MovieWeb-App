@@ -1,0 +1,27 @@
+# Virtuelle Umgebungen
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Datenbank-Dateien
+instance/movies.db
+instance/*.sqlite
+
+# Umgebungsvariablen & API-Schlüssel
+.env
+config.py  # Falls du API-Keys dort speicherst
+
+# VSCode & PyCharm-Projektdateien
+.vscode/
+.idea/
+*.iml
+
+# Log-Dateien & Caches
+*.log
+*.cache/
+
+# Nur lokale Test-Skripte ignorieren
+test_*.py
