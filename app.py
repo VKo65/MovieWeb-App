@@ -28,7 +28,7 @@ data_manager = SQLiteDataManager("instance/movies.db")
 
 @app.route('/')
 def home():
-    return "Willkommen bei MoviWeb!"
+    return render_template('home.html')
 
 @app.route('/users')
 def list_users():

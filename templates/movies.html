@@ -3,10 +3,10 @@
 {% block title %}Filme von {{ user.username }}{% endblock %}
 
 {% block content %}
-<h1 class="text-center">🎬 Filme von {{ user.username }}</h1>
+<h1 class="text-center">🎬 Movies of {{ user.username }}</h1>
 
 <!-- Neuen Film hinzufügen Button -->
-<a href="{{ url_for('add_movie', user_id=user.id) }}" class="btn btn-success mb-3">➕ Film hinzufügen</a>
+<a href="{{ url_for('add_movie', user_id=user.id) }}" class="btn btn-success mb-3">➕ Add Movie</a>
 
 <div class="row">
     {% for movie in movies %}
@@ -14,16 +14,30 @@
         <div class="card mb-3">
             <div class="card-body">
                 <h5 class="card-title">{{ movie.title }} ({{ movie.year }})</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Regie: {{ movie.director }}</h6>
-                <p class="card-text">⭐ Bewertung: {{ movie.rating }}</p>
+                <h6 class="card-subtitle mb-2 text-muted">Director: {{ movie.director }}</h6>
+                <p class="card-text">⭐ Rating: {{ movie.rating }}</p>
+
+                <!-- Edit-Button -->
                 <a href="{{ url_for('edit_movie', movie_id=movie.id) }}" class="btn btn-warning btn-sm">✏️ Bearbeiten</a>
-                <a href="{{ url_for('delete_movie', movie_id=movie.id) }}" class="btn btn-danger btn-sm">🗑️ Löschen</a>
+
+                <!-- Delete-Button with confirm -->
+                <form action="{{ url_for('delete_movie', movie_id=movie.id) }}" method="post" onsubmit="return confirmDelete('{{ movie.title }}')">
+                     <button type="submit" class="btn btn-danger btn-sm">🗑️ Delete</button>
+                </form>
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
 
-<!-- Zurück zur Benutzerliste -->
-<a href="{{ url_for('list_users') }}" class="btn btn-secondary">⬅️ Zurück zur Benutzerliste</a>
+<!-- Back to User list -->
+<a href="{{ url_for('list_users') }}" class="btn btn-secondary">⬅️ Back to the list of user</a>
+
+<!-- ✅ JavaScript -->
+<script>
+    function confirmDelete(movieTitle) {
+        return confirm(`❗ Are you sure you want to delete "${movieTitle}" ?`);
+    }
+</script>
+
 {% endblock %}
