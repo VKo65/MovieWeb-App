@@ -9,36 +9,35 @@ load_dotenv()
 OMDB_API_KEY = os.getenv("OMDB_API_KEY")
 
 class SQLiteDataManager(DataManagerInterface):
-    """DataManager für SQLite, der das Interface implementiert."""
+    """DataManager for SQLite, that implements the Interface."""
 
     def __init__(self, db_file_name):
 
-        self.db = db  # ✅ Nutzt die bestehende Flask-Datenbankverbindung
+        self.db = db  # Use the existing Flask-DB connection
         self.db_file_name = db_file_name
 
     def get_all_users(self):
-        """Gibt alle Benutzer zurück.✅"""
+        """Gives back all user"""
         return User.query.all()
 
     def get_user_by_id(self, user_id):
-        """Gibt den Benutzer mit der angegebenen ID zurück, mit Fehlerhandling"""
+        """gives the user with this ID"""
         try:
             return self.db.session.get(User, user_id)  # Holt den User anhand der ID
         except Exception as e:
-            print(f"❌ Fehler beim Abrufen des Benutzers: {e}")
+            print(f"❌ Error by trying to get user: {e}")
             return None
 
 
     def get_user_movies(self, user_id):
-        """Gibt alle Filme eines bestimmten Benutzers zurück.
-        filter_by(user_id=user_id) sucht alle Filme des entsprechenden Users.
-        all gibt dann eine Liste zurück
-        Laüft noch nicht❌"""
+        """Returns all movies of a specific user.
+        filter_by(user_id=user_id) searches for all films of the corresponding user.
+        all then returns a list"""
         return Movie.query.filter_by(user_id=user_id).all()
 
 
     def add_user(self, username):
-        """Fügt einen neuen Benutzer zur Datenbank hinzu."""
+        """Add User to DB."""
         try:
             new_user = User(username=username)
             self.db.session.add(new_user)
@@ -46,12 +45,12 @@ class SQLiteDataManager(DataManagerInterface):
             print(f"✅ Benutzer {username} mit ID {new_user.id} hinzugefügt.")
             return new_user.id
         except Exception as e:
-            print(f"❌ Fehler beim Hinzufügen des Benutzers {username}: {e}")
+            print(f"❌ Error by adding User {username}: {e}")
             self.db.session.rollback()
             return None
 
     def add_movie(self, user_id, title, director, year, rating):
-        """Fügt einen neuen Film zur Datenbank hinzu."""
+        """Add movie to DB"""
         new_movie = Movie(title=title, director=director, year=year, rating=rating, user_id=user_id)
 
         try:
@@ -60,30 +59,30 @@ class SQLiteDataManager(DataManagerInterface):
             return new_movie.id
         except Exception as e:
             self.db.session.rollback()
-            print(f"❌ Fehler beim Hinzufügen des Films: {e}")
+            print(f"❌ Error by adding movie: {e}")
             return None
 
     def update_movie(self, movie_id, new_data):
-        """Aktualisiert einen vorhandenen Film mit neuen Daten."""
-        movie = self.db.session.get(Movie, movie_id)  # Film suchen
+        """Edit existing Film"""
+        movie = self.db.session.get(Movie, movie_id)
 
         if movie:
             for key, value in new_data.items():
-                setattr(movie, key, value)  # Neue Werte setzen
+                setattr(movie, key, value)
 
-            self.db.session.commit()  # Änderungen speichern
+            self.db.session.commit()
             return True
         else:
             return False
 
 
     def get_movie_by_id(self, movie_id):
-        """Gibt einen Film anhand der ID zurück."""
+        """Gives a movie by ID"""
         return self.db.session.get(Movie, movie_id)
 
 
     def delete_movie(self, movie_id):
-        """Löscht einen Film."""
+        """Delete movie."""
         movie = Movie.query.get(movie_id)
         if movie:
             self.db.session.delete(movie)
@@ -93,7 +92,7 @@ class SQLiteDataManager(DataManagerInterface):
 
 
     def fetch_movie_from_omdb(self, title):
-        """Holt Filminformationen aus der OMDb API."""
+        """Get information of movie from OMDb API."""
         url = f"http://www.omdbapi.com/?t={title}&apikey={OMDB_API_KEY}"
 
         try:

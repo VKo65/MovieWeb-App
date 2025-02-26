@@ -1,23 +1,23 @@
 from models import db, User, Movie
 
 class DataManager:
-    """ Klasse zur Verwaltung der Datenbank-Interaktionen. """
+    """ Class to manage DB action"""
 
     @staticmethod
     def get_users():
-        """ Gibt alle Benutzer zurück. """
+        """Gives all user. """
         return User.query.all()
 
     @staticmethod
     def get_movies(user_id=None):
-        """ Gibt alle Filme zurück. Falls eine user_id übergeben wird, nur die Filme des Nutzers. """
+        """Gives all movies. If a user id available, only for this user """
         if user_id:
             return Movie.query.filter_by(user_id=user_id).all()
         return Movie.query.all()
 
     @staticmethod
     def add_movie(title, director, year, rating, user_id):
-        """ Fügt einen neuen Film zur Datenbank hinzu. """
+        """Add Movie to DB"""
         new_movie = Movie(title=title, director=director, year=year, rating=rating, user_id=user_id)
         db.session.add(new_movie)
         db.session.commit()
@@ -25,7 +25,7 @@ class DataManager:
 
     @staticmethod
     def update_movie(movie_id, title=None, director=None, year=None, rating=None):
-        """ Aktualisiert einen bestehenden Film. """
+        """Update a movie"""
         movie = Movie.query.get(movie_id)
         if not movie:
             return None
@@ -44,7 +44,7 @@ class DataManager:
 
     @staticmethod
     def delete_movie(movie_id):
-        """ Löscht einen Film aus der Datenbank. """
+        """Delete a movie from DB"""
         movie = Movie.query.get(movie_id)
         if movie:
             db.session.delete(movie)

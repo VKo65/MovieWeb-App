@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 API_KEY = os.getenv("OMDB_API_KEY")
 
-# Absoluter Pfad für SQLAlchemy setzen
+# Set absolute path to SQLAlchemy
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DB_PATH = os.path.join(BASE_DIR, "instance", "movies.db")
 
@@ -18,20 +18,22 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
-# Logging einrichten
+# Logging
 logging.basicConfig(filename='error.log', level=logging.ERROR)
 
-# SQLiteDataManager mit dem fixen Pfad initialisieren
+# Initialise SQLiteDataManager with fixe path
 data_manager = SQLiteDataManager("instance/movies.db")
 
 
 
 @app.route('/')
 def home():
+    """Homepage Route - Displays the main welcome page."""
     return render_template('home.html')
 
 @app.route('/users')
 def list_users():
+    """Displays a list of all registered users."""
     users = data_manager.get_all_users()
 
     return render_template('users.html', users=users)
@@ -39,8 +41,15 @@ def list_users():
 
 @app.route('/movies/<int:user_id>')
 def user_movies(user_id):
-    user = data_manager.get_user_by_id(user_id)  # Holt den Benutzer
-    movies = data_manager.get_user_movies(user_id)  # Holt die Filme
+    """
+        Displays all movies for a specific user.
+        Args:
+            user_id (int): The ID of the user.
+        Returns:
+            Rendered HTML page with the list of movies for user.
+        """
+    user = data_manager.get_user_by_id(user_id)
+    movies = data_manager.get_user_movies(user_id)
 
     if not user:
         return "❌ Benutzer nicht gefunden!", 404
@@ -50,7 +59,13 @@ def user_movies(user_id):
 
 @app.route('/delete_movie/<int:movie_id>', methods=['POST'])
 def delete_movie(movie_id):
-    """Löscht einen Film und leitet den Benutzer zurück zur Filmseite."""
+    """
+    Deletes one specific movie from the database.
+    Args:
+        movie_id (int): The ID of the movie.
+    Returns:
+        Redirects to the user's movie list after successful deletion.
+    """
     success = data_manager.delete_movie(movie_id)
 
     if success:
@@ -63,23 +78,38 @@ def delete_movie(movie_id):
 
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():
+    """
+        Handles the addition of a new user.
+        - If GET request: Displays the user registration form.
+        - If POST request: Processes the form and adds a new user to the database.
+        Returns:
+            Redirects to the user list upon success or renders the form again if failed.
+        """
     if request.method == 'POST':
         username = request.form.get('username')
         if username:
             data_manager.add_user(username)
-            return redirect(url_for('list_users'))  # Leitet zur Benutzerliste weiter
+            return redirect(url_for('list_users'))
 
-    return render_template('add_user.html')  # Zeigt das Formular
+    return render_template('add_user.html')
 
 
 @app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST'])
 def add_movie(user_id):
-
+    """
+        Allows users to add a new movie.
+        - If GET request: Displays the movie addition form.
+        - If POST request: Processes the form and saves the movie in the database.
+        Args:
+            user_id (int): The ID of the user adding the movie.
+        Returns:
+            Redirects to the user's movie list upon success.
+        """
 
     user = data_manager.get_user_by_id(user_id)
 
     if not user:
-        return "❌ Benutzer nicht gefunden!", 404
+        return "❌ User not found!", 404
 
     if request.method == 'POST':
         title = request.form['title']
@@ -96,12 +126,21 @@ def add_movie(user_id):
 
 @app.route('/movies/<int:movie_id>/edit', methods=['GET', 'POST'])
 def edit_movie(movie_id):
-    movie = data_manager.get_movie_by_id(movie_id)  # Holt den Film
+    """
+        Allows users to update the details of a movie.
+        - If GET request: Displays the edit form with current movie data.
+        - If POST request: Updates the movie information in database.
+        Args:
+            movie_id (int): The ID of the movie.
+        Returns:
+            Redirects to the user's movie list after a successful update.
+        """
+    movie = data_manager.get_movie_by_id(movie_id)
     if not movie:
-        return "❌ Film nicht gefunden!", 404
+        return "❌ Movie not found!", 404
 
     if request.method == 'POST':
-        # Formulardaten auslesen
+
         title = request.form['title']
         director = request.form['director']
         year = request.form['year']
@@ -127,10 +166,17 @@ def edit_movie(movie_id):
 
 @app.route('/fetch_movie_data')
 def fetch_movie_data():
+    """
+        Fetches movie details from the OMDb API based on a given title.
+        This function is called via JavaScript when the user enters a movie title.
+        It queries the OMDb API and returns relevant movie details in JSON-format.
+        Returns:
+            JSON response containing movie details if found.
+        """
     title = request.args.get("title")
 
     if not title:
-        return jsonify({"success": False, "error": "Kein Titel angegeben"}), 400
+        return jsonify({"success": False, "error": "No input of title"}), 400
 
     url = f"http://www.omdbapi.com/?t={title}&apikey={API_KEY}"
     response = requests.get(url)
@@ -144,7 +190,7 @@ def fetch_movie_data():
             "rating": data.get("imdbRating", "N/A"),
         })
     else:
-        return jsonify({"success": False, "error": "Film nicht gefunden"}), 404
+        return jsonify({"success": False, "error": "Movie not found"}), 404
 
 
 

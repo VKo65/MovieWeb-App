@@ -54,8 +54,8 @@ def add_test_movies():
     print("✅ Testfilme wurden hinzugefügt!")
 
 if __name__ == "__main__":
-    from app import app  # Stelle sicher, dass du die Flask-App importierst
+    from app import app
 
     with app.app_context():  # App-Kontext aktivieren
         add_test_users()  # Falls nötig, fügt Benutzer hinzu
-        add_test_movies()  # Diese Zeile stellt sicher, dass Filme eingefügt werden!
+        add_test_movies()  #stellt sicher, dass Filme eingefügt werden!
