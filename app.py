@@ -52,7 +52,7 @@ def user_movies(user_id):
     movies = data_manager.get_user_movies(user_id)
 
     if not user:
-        return "❌ Benutzer nicht gefunden!", 404
+        return "❌ User not found!", 404
 
     return render_template("movies.html", user=user, movies=movies)
 
@@ -69,9 +69,9 @@ def delete_movie(movie_id):
     success = data_manager.delete_movie(movie_id)
 
     if success:
-        print(f"✅ Film mit ID {movie_id} wurde gelöscht.")
+        print(f"✅ Movie ID {movie_id} successfull deleted.")
     else:
-        print(f"❌ Film mit ID {movie_id} nicht gefunden.")
+        print(f"❌ Movie ID {movie_id} not found.")
 
     return redirect(request.referrer or url_for('home'))
 
@@ -159,7 +159,7 @@ def edit_movie(movie_id):
         if success:
             return redirect(url_for('user_movies', user_id=movie.user_id))
         else:
-            return "❌ Fehler beim Aktualisieren!", 500
+            return "❌ Error during update!", 500
 
     return render_template('edit_movie.html', movie=movie)
 
@@ -205,6 +205,5 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     app.run(debug=True)
