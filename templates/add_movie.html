@@ -9,7 +9,7 @@
     <form method="POST" class="mt-4">
         <div class="mb-3">
             <label for="title" class="form-label">Movie title:</label>
-            <input type="text" id="title" name="title" class="form-control" onblur="fetchMovieData()" required>
+            <input type="text" id="title" name="title" class="form-control" required>
         </div>
 
         <div class="mb-3">
@@ -27,21 +27,19 @@
             <input type="text" id="rating" name="rating" class="form-control" required>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">➕ Add Movie</button>
+        <button type="button" class="btn btn-primary w-100" onclick="handleAddMovie()">➕ Add Movie</button>
     </form>
 
     <a href="{{ url_for('user_movies', user_id=user.id) }}" class="btn btn-secondary w-100 mt-3">⬅️ Back</a>
 </div>
 
-<!-- JavaScript für OMDb API Anfrage -->
+<!-- JavaScript for OMDb API Request -->
 <script>
     async function fetchMovieData() {
         const title = document.getElementById("title").value.trim();
-        if (title.length < 3) return;
+        if (title.length < 3) return { success: false };
 
         try {
-            console.log(`🔍 Request for title: ${title}`);
-
             const response = await fetch(`/fetch_movie_data?title=${encodeURIComponent(title)}`);
             const data = await response.json();
 
@@ -49,13 +47,23 @@
                 document.getElementById("director").value = data.director || "";
                 document.getElementById("year").value = data.year || "";
                 document.getElementById("rating").value = data.rating || "";
-
-                console.log("✅ Movie successfully added:", data);
+                return { success: true };
             } else {
                 alert("⚠️ Movie not found!");
+                return { success: false };
             }
         } catch (error) {
             console.error("❌ Error loading movie data:", error);
+            return { success: false };
+        }
+    }
+
+    async function handleAddMovie() {
+        const result = await fetchMovieData();
+        if (result.success) {
+            document.querySelector("form").submit();
+        } else {
+            console.log("🚫 Movie data not complete – form not submitted.");
         }
     }
 </script>

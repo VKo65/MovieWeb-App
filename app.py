@@ -159,7 +159,7 @@ def edit_movie(movie_id):
         if success:
             return redirect(url_for('user_movies', user_id=movie.user_id))
         else:
-            return "❌ Error during update!", 500
+            return "❌ Error during update±±!", 500
 
     return render_template('edit_movie.html', movie=movie)
 
@@ -206,4 +206,5 @@ def internal_server_error(e):
 
 
 if __name__ == "__main__":
+    print("✅ Flask is starting... Visit http://127.0.0.1:5000/")
     app.run(debug=True)
